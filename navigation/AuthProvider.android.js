@@ -65,6 +65,7 @@ console.log(error);
         } catch(e){
             console.log(e);
         }
+        
     },
     logout: async () => {
         try {

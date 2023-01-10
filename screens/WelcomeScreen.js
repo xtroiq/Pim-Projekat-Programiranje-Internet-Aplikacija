@@ -5,74 +5,36 @@ import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
 import { AuthContext } from '../navigation/AuthProvider';
+import { firebase } from '@react-native-firebase/database';
 import firestore from '@react-native-firebase/firestore';
-
- 
-
+import HomeScreen from './HomeScreen';
 
 
+ const WelcomeScreen = ({navigation}) => {
 
 
-
-
-const WelcomeScreen = ({navigation}) => {
-
-    const [docId, setDocId] = useState('');
-    const [userid, setuserid] = useState('');
-
-    useEffect(() => {
-        function getData() {
-        
-            firestore()
-            .collection('users')
-            .get()
-            .then(querySnapshot => {
-              console.log('Total users: ', querySnapshot.size);
-          
-              querySnapshot.forEach(documentSnapshot => {
-                //console.log('User ID: ', documentSnapshot.id);
-                setDocId(documentSnapshot.id);
-              });
-            });
-    }
-   
-    
-
-
-    
-    getData();
-    },[]);
-
-    function getUserIDCode(documentSnapshot) {
-        return documentSnapshot.get('userID');
-      }
-      
-      firestore()
-        .collection('users')
-        .doc(docId)
-        .get()
-        .then(documentSnapshot => getUserIDCode(documentSnapshot))
-        .then(userid => {
-          console.log('Users name is: ', userid);
-          setuserid(userid);
-          if (user.uid === userid ) {
-            navigation.navigate('HomeScreen');
-        } else null;
-        });
-
-        
-
-
+    const [initializing, setInitializing] = useState(true);
     const {logout, user} = useContext(AuthContext);
     const [username, setUsername] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-   
-const userId = user.uid;
+    const [AlertNoticeShown, setAlertNoticeShown] = useState(true);
+    const userId = user.uid;
+    const [verUser, setVerUser] = useState(false);
    
     
-    
-    const  updateData = () => {
+
+     
+
+  
+
+
+const  updateData = () => {
+
+      if (username.length == 0) {
+        setAlertNoticeShown(true);
+        return;
+      }
 
        let data = {
             userId : userId,
@@ -85,21 +47,36 @@ const userId = user.uid;
 
          firestore()
   .collection('users')
-  .add({
+  .doc(userId)
+  .set({
     firstName: data.firstName,
     lastName: data.lastName,
     userID: data.userId,
-    username: data.username
+    username: data.username,
+    country: '',
+    city: '',
+    address:'',
+    phoneNumber:'',
+    zipCode:0,
+    isLogedIn:true,
+    firePoints:0,
+    woodPoints:20,
+
+
   })
   .then(() => {
     console.log('User added!');
     navigation.navigate('HomeScreen');
   });
     }
+
     
+       
       return (
+
+        
         <View style={styles.container}>
-        <Text style={styles.text}>User id: {user.uid}</Text>
+        <Text style={styles.text}>Hi there</Text>
         <Text style={styles.text}>Please fill to continue</Text>
 
         
@@ -114,6 +91,10 @@ const userId = user.uid;
          autoCorrect={false}
     
        />
+       { AlertNoticeShown ? null : 
+            
+            <Text style={styles.errorMsg}>Please enter username</Text>
+       }
        <FormInput 
        labelValue={firstName}
        onChangeText={(firstName) => setFirstName(firstName)}
@@ -141,10 +122,18 @@ const userId = user.uid;
          onPress={() => updateData(userId,username,firstName,lastName,)}
        />
       
+      <FormButton buttonTitle='Logout' onPress={() => logout()} />
       
         </View>
+       
       );
+     
+    
+
+  
     }
+  
+  
     
     const styles = StyleSheet.create({
         container: {
@@ -184,6 +173,7 @@ const userId = user.uid;
             marginBottom:10,
             color:'#051d5f',
           },
+         
       });
     
     export default WelcomeScreen;

@@ -11,101 +11,51 @@ import firestore from '@react-native-firebase/firestore';
 
 
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   
+  const [serverData, setServerData] = React.useState({});
+  const [userData, setUserData] = React.useState({});
   
+  const {logout,user} = useContext(AuthContext);
 
-  const [docId, setDocId] = useState('');
-  const [documentUserId, setDocumentUserId] = useState('');
-  const [userid, setuserid] = useState('');
-  const [username, setUsername] = useState('');
-  const [firstName, setFirstName] = useState('');
-
-  useEffect(() => {
-      function getData() {
-      
-          firestore()
-          .collection('users')
-          .get()
-          .then(querySnapshot => {
-           // console.log('Total users: ', querySnapshot.size);
-        
-            querySnapshot.forEach(documentSnapshot => {
-              //console.log('User ID: ', documentSnapshot.id);
-              setDocId(documentSnapshot.id);
-            });
-          });
-  }
- 
-  
+  const userID = user.uid;
 
 
-  
-  getData();
-  },[]);
 
-  function getFirstName(documentSnapshot) {
-    return documentSnapshot.get('firstName');
-  }
 
-  function getUserName(documentSnapshot) {
-    return documentSnapshot.get('username');
-  }
-
-  
-
-  function getUserIDCode(documentSnapshot) {
-      return documentSnapshot.get('userID');
-    }
-    useEffect(() => {
+  function getDataUser () {
     firestore()
-      .collection('users')
-      .doc(docId)
-      .get()
-      .then(documentSnapshot => getUserIDCode(documentSnapshot))
-      .then(userid => {
-        // console.log('User ID is: ', userid);
-        setuserid(userid);
+  .collection('users')
+  .doc(userID)
+  .get()
+  .then(documentSnapshot => {
+    console.log('User exists: ', documentSnapshot.exists);
 
-        if (user.uid === userid) {
-          firestore()
-      .collection('users')
-      .doc(docId)
-      .get()
-      .then(documentSnapshot => getUserName(documentSnapshot))
-      .then(username => {
-        console.log('Users name is: ', username);
-        setUsername(username);
-        setDocumentUserId(userid);
-      });
-        } else null;
-
-
-        if (user.uid === userid) {
-          firestore()
-      .collection('users')
-      .doc(docId)
-      .get()
-      .then(documentSnapshot => getFirstName(documentSnapshot))
-      .then(firstname => {
-        console.log('First name is: ', firstname);
-        setFirstName(firstname);
+    if (documentSnapshot.exists) {
+      console.log('User data: ', documentSnapshot.data());
+      setUserData(documentSnapshot.data());
+    }
+  });
         
-      });
-        } else null;
-      });
-    });
 
-    const [userData, setUserData] = React.useState({
-        name: '',
-      });
+  }
 
-      const [userDate, setUserDate] = React.useState({date: ''});
+
+    useEffect(() => {
+    
+    getDataUser();
+        
+          
+        
+      },[]);
+    
+
+    
 
 const reference = firebase 
   .app()
   .database('https://collect-fire-revived-default-rtdb.europe-west1.firebasedatabase.app/')
-  .ref('/UserData/Name');
+  .ref('/UserData');
 
 const date = firebase 
   .app()
@@ -122,14 +72,11 @@ const date = firebase
 
 
   useEffect(() => {
-    function getUsername () {
+    function getData () {
        
         reference.once('value').then(snapshot => {
     const data = snapshot.val();
-    setUserData({
-        ...userData,
-        name: data
-    });
+    setServerData(data);
 
     
 
@@ -137,24 +84,11 @@ const date = firebase
 
   })
 
-  date.once('value').then(key => {
-    const date = key.val();
-    setUserDate({
-        ...userDate,
-        date : date
-    });
-
-    
-
-    console.log(key.val());
-
-  })
-
 
 
 }
 
-getUsername();
+getData();
   },[]);
 
 
@@ -162,16 +96,16 @@ getUsername();
   
 
 
-    const {logout,user} = useContext(AuthContext);
+    
 
     
 
 return (
     <View style={styles.container}>
-    <Text style={styles.text} >Welcome {firstName}</Text>
-    <Text style={styles.text} >Username: {username}</Text>
-    <Text style={styles.text} >Notification: {userData.name}{}</Text>
-    <Text style={styles.text} >Date: {userDate.date}{}</Text>
+    <Text style={styles.text} >Welcome {userData.firstName}</Text>
+    <Text style={styles.text} >Username: {userData.username}</Text>
+    <Text style={styles.text} >Notification: {serverData.Notification} </Text>
+    <Text style={styles.text} >Date: {serverData.Date} </Text>
     <FormButton buttonTitle='Logout' onPress={() => logout()} />
     </View>
 )

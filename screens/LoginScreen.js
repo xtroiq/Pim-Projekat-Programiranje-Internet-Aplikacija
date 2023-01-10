@@ -1,5 +1,6 @@
 import React ,{useState,useContext}from 'react';
-import { View, StyleSheet, Button,Text ,Image,TouchableOpacity,Platform} from 'react-native';
+import { View, Text, StyleSheet, Button ,Image,TouchableOpacity,Platform,StatusBar,TextInput} from 'react-native';
+
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
@@ -7,18 +8,177 @@ import SocialButton from '../components/SocialButton';
 import {SvgCss, SvgXml} from 'react-native-svg';
 import { AuthContext } from '../navigation/AuthProvider';
 
+import Header from '../assets/img/header_logo.svg';
+
+import {green} from '../config/colors';
+import center from 'native-base/src/theme/components/center';
+
+
 
 const LoginScreen = ({navigation}) => {
+
+
+
+
 
 const [email, setEmail] = useState('');
 const [password, setPassword] = useState('');
 const {login,googleLogin,facebookLogin} = useContext(AuthContext);
-  return (
+
+
+
+
+const [userData, setUserData] = React.useState({
+  
+  check_textInputChange: false,
+  secureTextEntry: true,
+  isValidUser: true,
+  isValidPassword: true,
+  rememberMe: false,
+});
+
+
+const updateSecureTextEntry = () => {
+  setUserData({
+      ...userData,
+      secureTextEntry: !userData.secureTextEntry
+  });
+}
+
+//checking username input for error message
+const handleValidUser = (val) => {
+  if( val.trim().length >= 4 ) {
+      setUserData({
+          ...userData,
+          isValidUser: true
+      });
+  } else {
+      setUserData({
+          ...userData,
+          isValidUser: false
+      });
+  }
+}
+
+
+
+ 
+
+  //checking username input for error message
+  const textInputChange = (val) => {
+    if( val.trim().length >= 4 ) {
+        setUserData({
+            ...userData,
+            username: val,
+            check_textInputChange: true,
+            isValidUser: true
+        });
+    } else {
+        setUserData({
+            ...userData,
+            username: val,
+            check_textInputChange: false,
+            isValidUser: false
+        });
+    }
+}
+  
+//checking if password is <8 to cancel error message
+const handlePasswordChange = (val) => {
+  const regularExpression = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/ ;
+        if( !regularExpression.test(val)) {
+          setUserData({
+            ...userData,
+            password: val,
+            isValidPassword: false,
+            
+        });
+         } else {
+      setUserData({
+        ...userData,
+        password: val,
+        isValidPassword: true,
+        
+    });
+    }
+}
+
+//LoginLocal with logic.
+const logInLocal = (email,password) => {
+  const regularExpression = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/ ;
+  const regularExpressionMail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/ ;
+
+//   if (email.length < 5) {
+//     console.log('Bad email')
+//     return;
+
+//   } 
+
+//   if (email.length == 0) {
+//     console.log('Mail cannot be empty!')
+//     return;
+
+//   }
+
+// if ( password.length == 0) {
+//   console.log('Password cannot be empty!');
+//   return;
+// }
+
+
+// if (!regularExpressionMail.test(email)) {
+//   console.log('Email is not good format!')
+//   return;
+
+// }
+
+// if (!regularExpression.test(password)) {
+//   console.log('Password must contain at least one number and one capital letter.')
+//   return;
+
+// }
+
+
+        let data = {
+          email: email,
+          password: password,
+          
+       };
+       setEmail(data.email);
+       setPassword(data.password);
+
+
+       login(email,password);
+          };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+return (
+
+  
     <View style={styles.container}>
-    <View style={styles.container}>
-   <Text style={styles.text}>PIM univerzitet tutorijal za PIA - Login Screen</Text>
-   </View>
-   <FormInput 
+    <View style={styles.authHeader}>
+        <Header style={{width: '100%', height: '100%' }} preserveAspectRatio="xMinYMid slice"/>
+      </View>
+      <StatusBar  hidden={true}/>
+      
+      <View style={styles.containerInput}>
+    <FormInput 
    labelValue={email}
    onChangeText={(userEmail) => setEmail(userEmail)}
      placeHolderText='Email'
@@ -41,7 +201,8 @@ const {login,googleLogin,facebookLogin} = useContext(AuthContext);
 
    <FormButton 
      buttonTitle='Login'
-     onPress={() => login(email,password)}
+     onPress={() => logInLocal(email,password)}
+     
    />
    <TouchableOpacity style={styles.fogotButton}>
      <Text style={styles.navButtonText}>Forget Password?</Text>
@@ -64,17 +225,38 @@ color='#de4d41'
      <Text style={styles.navButtonText}>Dont Have Account create here?</Text>
    </TouchableOpacity>
     </View>
+    </View>
+
+
+
+//////////////////////////////////////////////
+
+
+
+      
+
+    
   );
 }
+
+
+
 
 const styles = StyleSheet.create({
     container: {
         flex:1,
-        alignItems:'center',
-        justifyContent:'center',
-        backgroundColor:'#f9fafd',
-        padding:20
+        backgroundColor:green,
+        
+        
     },
+    containerInput: {
+      flex:1,
+      backgroundColor:green,
+      marginTop:'20%',
+      padding:'2%'
+      
+      
+  },
     logo:{
       height:150,
       width:150,
@@ -99,7 +281,11 @@ const styles = StyleSheet.create({
       alignItems:'center',
       alignSelf:'center'
       
-    }
+    },
+    authHeader: {
+      height: 150,
+      width: '100%',
+    },
   });
 
 export default LoginScreen;

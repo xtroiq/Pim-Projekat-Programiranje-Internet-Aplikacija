@@ -16,6 +16,7 @@ const onAuthStateChanged = (user) => {
 }
 
 
+
 useEffect(()=> {
 const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
 return subscriber;
@@ -23,13 +24,18 @@ return subscriber;
 
 },[]);
 
- if(initializing) return null;
+ if (initializing) return null;
 
+    
     return (
         <NavigationContainer>
         {user ? <AppStack /> : <AuthStack /> }
         </NavigationContainer>
     );
+ 
+ 
+
+    
 };
 
 export default Routes;
