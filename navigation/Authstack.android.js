@@ -10,6 +10,7 @@ import icon from 'react-native-vector-icons/FontAwesome';
 import OnboardingScreen from '../screens/OnboardingScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SingUpScreen from '../screens/SingUpScreen';
+
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 
@@ -56,16 +57,19 @@ if( FirstLaunch === null) {
 }
 
 return (
+  
     <Stack.Navigator initialRouteName={routeName}>
       
         <Stack.Screen name='Onboarding' 
         component={OnboardingScreen}
         options={{header: () => null}}
         />
+        
         <Stack.Screen name='Login' 
         component={LoginScreen}
         options={{header: () => null}}
         />
+        
         <Stack.Screen name='Register' 
         component={SingUpScreen}
         options={({navigation}) => ({
@@ -90,6 +94,7 @@ return (
         })}
         />
     </Stack.Navigator>
+   
   
   
     );

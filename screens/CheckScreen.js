@@ -1,7 +1,7 @@
 import React , {useContext,useState,useEffect}from 'react';
 import { AuthContext } from '../navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
-
+import { View} from 'react-native';
 
 const CheckScreen = ({navigation}) => {
 
@@ -49,7 +49,11 @@ const CheckScreen = ({navigation}) => {
 
     
         
-     return null;
+     return (
+        <View style={{flex: 1}}>
+
+        </View>
+     )
      
      
     

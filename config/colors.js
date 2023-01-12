@@ -16,3 +16,4 @@ export const WP002 = '#B62203';
 export const WP003 = '#D73502';
 export const WP004 = '#F8920F';
 export const WP005 = '#FAC000';
+export const homeScrenBackground = 'rgba(190, 218, 185, 1)';

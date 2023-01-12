@@ -21,10 +21,31 @@ import HomeScreen from './HomeScreen';
     const [AlertNoticeShown, setAlertNoticeShown] = useState(true);
     const userId = user.uid;
     const [verUser, setVerUser] = useState(false);
-   
+    const [usersID, setIdUsers] = React.useState('');
+    const [name, setName] = React.useState('');
+
     
 
-     
+    const checkUsernameExists = async (username) => {
+      let querySnapshot = await firestore().collection('users').where('username', '==', username).get();
+      return querySnapshot.size > 0;
+    }
+    
+    const checkUsernames = async (username) => {
+      let exists = await checkUsernameExists(username);
+      if (exists) {
+        console.log('Username already exists');
+      } else {
+        updateData();
+        console.log('Username is available');
+
+      }
+    }
+
+
+
+   
+    
 
   
 
@@ -32,7 +53,17 @@ import HomeScreen from './HomeScreen';
 const  updateData = () => {
 
       if (username.length == 0) {
-        setAlertNoticeShown(true);
+        console.log('No username inside input');
+        return;
+      }
+
+      if (firstName.length == 0) {
+        console.log('No firstname inside input');
+        return;
+      }
+
+      if (lastName.length == 0) {
+        console.log('No lastname inside input');
         return;
       }
 
@@ -119,11 +150,12 @@ const  updateData = () => {
     
        <FormButton 
          buttonTitle='Update your data'
-         onPress={() => updateData(userId,username,firstName,lastName,)}
+         onPress={() => checkUsernames(username) /* checkUsername(userId,username,firstName,lastName) */}
        />
       
-      <FormButton buttonTitle='Logout' onPress={() => logout()} />
       
+      <FormButton buttonTitle='Logout' onPress={() => logout()} />
+      <FormButton buttonTitle='Navigate' onPress={() => navigation.navigate('HomeScreen')} />
         </View>
        
       );
