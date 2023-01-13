@@ -13,7 +13,7 @@ const [email, setEmail] = useState('');
 const [password, setPassword] = useState('');
 const [confirmPassword, setconfirmPassword] = useState();
 
-const {register} = useContext(AuthContext);
+const {register,googleLogin,facebookLogin} = useContext(AuthContext);
 
   return (
     <View style={styles.container}>
@@ -69,14 +69,14 @@ buttonTitle='Sign up with facebook'
 btnType='facebook'
 color='#4867aa'
   backgroundColor='#e6eaf4'
-  onPress={() => {}}
+  onPress={() => {facebookLogin()}}
 />
 <SocialButton 
 buttonTitle='Sign up with Google'
 btnType='google'
 color='#de4d41'
   backgroundColor='#f5e7ea'
-  onPress={() => {}}
+  onPress={() => {googleLogin()}}
 />
 </View>) : null}
     </View>

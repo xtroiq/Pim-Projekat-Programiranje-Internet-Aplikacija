@@ -29,6 +29,7 @@ import WelcomeScreen from '../screens/WelcomeScreen';
 import CheckScreen from '../screens/CheckScreen';
 import RewardsScreen from '../screens/RewardsScreen';
 import Header from './headers/header';
+import LoginScreen from '../screens/LoginScreen';
 
 const active = white;
 const inactive = orange;
@@ -50,6 +51,8 @@ const HomeStack = ({navigation}) => (
       
       
     />
+
+
 
 </Stack.Navigator>
 
@@ -75,6 +78,13 @@ export const RewardsScreenStack = ({navigation}) => (
       
       
     />
+
+<Stack.Screen name='LoginScreen' 
+        component={LoginScreen}
+        options={{headerShown: false}}
+        />
+
+
 
 
  <Stack.Screen

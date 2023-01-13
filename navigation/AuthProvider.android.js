@@ -79,8 +79,7 @@ console.log(error);
     },
     logout: async () => {
         try {
-            await auth().signOut();
-            firestore()
+          firestore()
   .collection('users')
   .doc(user?.uid)
   .update({
@@ -97,6 +96,8 @@ console.log(error);
   .then(() => {
     console.log('Session deleted!');
   });
+            await auth().signOut();
+     
         }catch(e){
             console.log(e);
         }

@@ -1,4 +1,4 @@
-import React , {useContext,useState,useEffect}from 'react';
+import React , {useContext,useState,useEffect,useRef}from 'react';
 import { AuthContext } from '../navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 import { View} from 'react-native';
@@ -8,41 +8,47 @@ const CheckScreen = ({navigation}) => {
     const {user, setUser} = useContext(AuthContext);
 
     const userId = user.uid;
-
+    const unsubscribe = useRef(null);
 
     useEffect(() => {
-        verifiedUser() ;
-        
-             
-        },[]);
+        unsubscribe.current = firestore()
+          .collection('users')
+          .doc(userId)
+          .onSnapshot(documentSnapshot => {
+            if (documentSnapshot.exists) {
+              navigation.navigate('HomeScreen');
+            } else {
+                navigation.navigate('WelcomeScreen');
+            }
+          });
     
-    function getUserIDCode(documentSnapshot) {
-        return documentSnapshot.get('userID');
-       }
+        return () => {
+          if (unsubscribe.current) {
+            unsubscribe.current();
+          }
+        };
+      }, []);
 
-    function verifiedUser  ()  {
+
+    
+    // useEffect(() => {
+      //   async function getDataUser() {
+      //     try {
+      //       const snapshot = await firestore()
+      //         .collection('users')
+      //         .doc(userID)
+      //         .onSnapshot((documentSnapshot) => {
+      //           if (documentSnapshot?.exists) {
+      //             console.log('Data succesfully obtained: ', documentSnapshot.data());
+      //             setUserData(documentSnapshot.data());
+      //           }
+      //         });
+      //     } catch (error) {
+      //       console.error('Error getting user data: ', error);
+      //     }
+      //   }
         
-  
-    firestore()
-    .collection('users')
-    .doc(userId)
-    .get()
-    .then(documentSnapshot => getUserIDCode(documentSnapshot))
-    .then(userid => {
-      //console.log('Users name is: ', userId);
-      if (userid === userId  ) {
-        
-        
-       navigation.navigate('HomeScreen');
-    } else 
-    
-    navigation.navigate('WelcomeScreen');
-    
-    
-    });
-    
-    };
-    
+      // }, [userID]);
     
     
     

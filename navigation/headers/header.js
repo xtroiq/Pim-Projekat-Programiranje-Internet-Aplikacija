@@ -38,51 +38,68 @@ const Header = ({navigation}) => {
    const {logout, user} = useContext(AuthContext);
    const userID = user.uid;
    const woodPoints = userData.woodPoint ;
+   const unsubscribe = useRef(null);
 
+   useEffect(() => {
+     unsubscribe.current = firestore()
+       .collection('users')
+       .doc(userID)
+       .onSnapshot(documentSnapshot => {
+         if (documentSnapshot.exists) {
+           setUserData(documentSnapshot.data());
+         }
+       });
+ 
+     return () => {
+       if (unsubscribe.current) {
+         unsubscribe.current();
+       }
+     };
+   }, []);
 
-   async function getDataUser () {
+  //  async function getDataUser () {
       
-   await firestore()
-  .collection('users')
-  .doc(userID)
-  .onSnapshot(documentSnapshot => {
-    //console.log('User exists: ', documentSnapshot.exists);
+  //  await firestore()
+  // .collection('users')
+  // .doc(userID)
+  // .onSnapshot(documentSnapshot => {
+  //   //console.log('User exists: ', documentSnapshot.exists);
 
-    if (documentSnapshot.exists) {
-  //console.log('User data: ', documentSnapshot.data());
-      setUserData(documentSnapshot.data());
+  //   if (documentSnapshot.exists) {
+  // //console.log('User data: ', documentSnapshot.data());
+  //     setUserData(documentSnapshot.data());
       
-    }
-  });
+  //   }
+  // });
 
   
         
 
-  }
+  // }
 
   
    
-  useEffect(() => {
+  // useEffect(() => {
     
-    getDataUser();
-    Animated.loop(
-      // runs given animations in a sequence
-      Animated.sequence([
-        // increase size
-        Animated.timing(anim.current, {
-          toValue: 1.2,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        // decrease size
-        Animated.timing(anim.current, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, []);
+  //   //getDataUser();
+  //   Animated.loop(
+  //     // runs given animations in a sequence
+  //     Animated.sequence([
+  //       // increase size
+  //       Animated.timing(anim.current, {
+  //         toValue: 1.2,
+  //         duration: 1000,
+  //         useNativeDriver: true,
+  //       }),
+  //       // decrease size
+  //       Animated.timing(anim.current, {
+  //         toValue: 1,
+  //         duration: 1000,
+  //         useNativeDriver: true,
+  //       }),
+  //     ]),
+  //   ).start();
+  // }, []);
 
 
 
@@ -109,7 +126,7 @@ const Header = ({navigation}) => {
             userData !== 'HomeScreen' ? (
               <>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('WelcomeScreen')}>
+                  onPress={() => logout()}>
                   {userData ? (
                     <Image
                     
@@ -176,7 +193,7 @@ const Header = ({navigation}) => {
             <Col size={1} >
               <View style={iconWrapper}>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('WelcomeScreen')}>
+                  onPress={() => navigation.navigate('LoginScreen')}>
                   <SvgCss xml={medalIcon} width="20" height="20" />
                 </TouchableOpacity>
               </View>
